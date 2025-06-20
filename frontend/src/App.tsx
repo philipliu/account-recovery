@@ -1086,6 +1086,15 @@ function App() {
           <h2>Create Smart Wallet</h2>
         </div>
 
+        <p style={{ marginBottom: '1.5rem', color: '#64748b' }}>
+          Create a smart contract wallet secured by your device's biometric authentication. 
+        </p>
+        <p style={{ fontSize: '0.875rem', color: '#94a3b8', marginBottom: '1.5rem' }}>
+          <strong>How it works:</strong> Your wallet's contract address is deterministically derived from your 
+          email/username. This means the same identifier always generates the same wallet address, 
+          allowing you to access your wallet from any device.
+        </p>
+
         {!walletAddress && (
           <div className="input-group">
             <label htmlFor="userIdentifier">Email or Username:</label>
@@ -1172,7 +1181,14 @@ function App() {
 
         {!isLoggedIn && !showLoginFallback && (
           <>
-            <p>Authenticate with your passkey to access your wallet:</p>
+            <p style={{ marginBottom: '1.5rem', color: '#64748b' }}>
+              Use your device's biometric authentication to access your existing wallet. 
+              Your passkey proves you own this wallet without needing passwords.
+            </p>
+            <p style={{ fontSize: '0.875rem', color: '#94a3b8', fontStyle: 'italic' }}>
+              Note: Some browsers/devices don't store your identifier with the passkey, 
+              so you may be asked to enter your email/username to derive your wallet address.
+            </p>
             <button className="btn-primary" onClick={handleLoginWithPasskey}>
               Login with Passkey
             </button>
@@ -1181,9 +1197,14 @@ function App() {
 
         {!isLoggedIn && showLoginFallback && (
           <>
-            <p>
-              Your passkey was authenticated, but we need your identifier to
-              compute the wallet address:
+            <p style={{ color: '#64748b', marginBottom: '1rem' }}>
+              ✅ Your passkey was successfully authenticated!
+            </p>
+            <p style={{ color: '#64748b' }}>
+              However, your browser/device didn't store your identifier with the passkey 
+              (this varies by implementation). Since your wallet address is deterministically 
+              derived from your identifier, please enter the exact same email/username 
+              you used when creating the wallet:
             </p>
             <div className="input-group">
               <label htmlFor="loginIdentifier">Your Email or Username:</label>
@@ -1261,6 +1282,11 @@ function App() {
             </span>
             <h2>Recovery Setup</h2>
           </div>
+
+          <p style={{ marginBottom: '1.5rem', color: '#64748b' }}>
+            Add a backup wallet that can help you regain access if you lose your device. 
+            This could be a hardware wallet, another phone, or a trusted friend's wallet.
+          </p>
 
           <div className="info-panel">
             <div className="info-item">
@@ -1343,6 +1369,26 @@ function App() {
           <div className="step-header">
             <span className="step-badge">4</span>
             <h2>Rotate to New Passkey</h2>
+          </div>
+
+          <p style={{ marginBottom: '1.5rem', color: '#64748b' }}>
+            Lost your device? Got a new phone? Use your recovery wallet to switch to a new passkey. 
+            This replaces your old device authentication with a new one.
+          </p>
+          
+          <div style={{ 
+            background: '#fef3c7', 
+            border: '1px solid #f59e0b', 
+            borderRadius: '8px', 
+            padding: '1rem', 
+            marginBottom: '1.5rem' 
+          }}>
+            <strong style={{ color: '#92400e' }}>⚠️ Important:</strong>
+            <p style={{ margin: '0.5rem 0 0 0', color: '#92400e' }}>
+              When logging in on your new device, you MUST use the exact same email/username 
+              as when you first created the wallet. The wallet address is deterministically derived 
+              from this identifier - using a different one will generate a different address.
+            </p>
           </div>
 
           <div className="input-group">
