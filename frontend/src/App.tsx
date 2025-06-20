@@ -1112,7 +1112,7 @@ function App() {
             : "Create Wallet with Passkey"}
         </button>
 
-        {credentialId && (
+        {credentialId && userIdentifier && (
           <div className="info-panel">
             <div className="info-item">
               <strong>Identifier:</strong> {userIdentifier}
@@ -1130,6 +1130,17 @@ function App() {
           <div className="info-panel success">
             <div className="info-item">
               <strong>Wallet Address:</strong> {walletAddress}
+            </div>
+          </div>
+        )}
+        
+        {!walletAddress && isLoggedIn && loginWalletAddress && (
+          <div className="info-panel">
+            <div className="info-item">
+              <strong>Note:</strong> You're logged in to wallet: {loginWalletAddress.slice(0, 20)}...
+            </div>
+            <div className="info-item">
+              This wallet was created in a previous session.
             </div>
           </div>
         )}
