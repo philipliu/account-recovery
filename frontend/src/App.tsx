@@ -37,7 +37,6 @@ function App() {
   const [credentialId, setCredentialId] = useState<string>("");
   const [isDeploying, setIsDeploying] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authSignature, setAuthSignature] = useState<string>("");
   const [loginPublicKey, setLoginPublicKey] = useState<string>("");
   const [loginWalletAddress, setLoginWalletAddress] = useState<string>("");
   const [userIdentifier, setUserIdentifier] = useState<string>("");
@@ -54,6 +53,8 @@ function App() {
     "",
   );
   const [shouldFlashCredentialId, setShouldFlashCredentialId] = useState(false);
+  const [showTxModal, setShowTxModal] = useState(false);
+  const [txSimulation, setTxSimulation] = useState<any>(null);
 
   const extractPublicKey = (
     response: AuthenticatorAttestationResponseJSON,
@@ -205,8 +206,8 @@ function App() {
           },
           user: {
             id: base64url(userIdentifier.toLowerCase().trim()), // Store identifier in userHandle for retrieval
-            name: userIdentifier.toLowerCase().replace(/\s+/g, "-"),
-            displayName: userIdentifier.trim(),
+            name: userIdentifier.toLowerCase().trim(), // Use original identifier for name
+            displayName: userIdentifier.trim(), // Use original identifier for display
           },
           pubKeyCredParams: [{ alg: -7, type: "public-key" }], // ES256
           authenticatorSelection: {
@@ -457,9 +458,6 @@ function App() {
       } else {
         // Fallback: ask user to enter their identifier
         setCredentialId(authentication.id);
-        setAuthSignature(
-          base64url(base64url.toBuffer(authentication.response.signature)),
-        );
         setShowLoginFallback(true);
         setStatus(
           "Please enter the identifier you used to create this wallet:",
@@ -514,7 +512,6 @@ function App() {
     const signature = base64url.toBuffer(authentication.response.signature);
 
     // Store the authentication data
-    setAuthSignature(base64url(signature));
     setCredentialId(authentication.id);
     setLoginIdentifier(identifier);
 
@@ -576,15 +573,14 @@ function App() {
     }
   };
 
-  const setRecoverySigner = async () => {
+  const prepareRecoveryTransaction = async () => {
     if (!recoveryAddress || !loginWalletAddress || !walletKit) {
       setStatus("Missing recovery address, wallet address, or wallet kit");
       return;
     }
 
     try {
-      setIsSettingRecovery(true);
-      setStatus("Setting recovery signer...");
+      setStatus("Preparing transaction...");
 
       // Create Soroban RPC client
       const server = new rpc.Server(RPC_URL);
@@ -649,14 +645,43 @@ function App() {
       }
 
       console.log("Simulation successful:", simulatedTx);
+      console.log("State changes:", simulatedTx.stateChanges);
 
-      setStatus("Please sign the transaction with your recovery wallet...");
+      // Store simulation data and show modal
+      setTxSimulation({
+        functionName: "set_recovery",
+        contract: targetWalletAddress,
+        args: [{
+          name: "recovery",
+          type: "Address",
+          value: recoveryAddress
+        }],
+        stateChanges: simulatedTx.stateChanges || [],
+        authEntries: simulatedTx.result?.auth || [],
+        simulation: simulatedTx
+      });
+      setShowTxModal(true);
+      setStatus("Review transaction details...");
 
-      // First simulate to get the auth entries that need to be signed
-      console.log("Simulating transaction to get auth entries...");
+    } catch (error) {
+      console.error("Transaction preparation error:", error);
+      setStatus(`Failed to prepare transaction: ${error}`);
+    }
+  };
+
+  const executeRecoveryTransaction = async () => {
+    if (!txSimulation) return;
+    
+    try {
+      setIsSettingRecovery(true);
+      setShowTxModal(false);
+      setStatus("Please authenticate with your passkey...");
+
+      const server = new rpc.Server(RPC_URL);
+      const targetWalletAddress = walletAddress || loginWalletAddress;
 
       // Get the auth entries from simulation
-      const authEntries = simulatedTx.result?.auth || [];
+      const authEntries = txSimulation.authEntries;
       console.log("Auth entries from simulation:", authEntries);
       console.log("Number of auth entries:", authEntries.length);
       console.log("Looking for target wallet address:", targetWalletAddress);
@@ -806,6 +831,12 @@ function App() {
         deployerKeypair.publicKey(),
       );
 
+      const contract = new Contract(targetWalletAddress);
+      const contractOp = contract.call(
+        "set_recovery",
+        Address.fromString(recoveryAddress).toScVal(),
+      );
+
       contractOp.body().invokeHostFunctionOp().auth([signedSmartWalletAuthEntry]);
 
       const finalTransaction = new TransactionBuilder(sourceAccount, {
@@ -818,7 +849,6 @@ function App() {
 
       const preparedTransaction = await server.prepareTransaction(finalTransaction);
       preparedTransaction.sign(deployerKeypair);
-
 
       const result = await server.sendTransaction(preparedTransaction);
 
@@ -929,9 +959,9 @@ function App() {
             id: window.location.hostname,
           },
           user: {
-            id: base64url(userIdentifier || loginIdentifier),
-            name: newPasskeyDisplayName.toLowerCase().replace(/\s+/g, "-"),
-            displayName: newPasskeyDisplayName.trim(),
+            id: base64url(userIdentifier || loginIdentifier), // Keep original identifier for address derivation
+            name: (userIdentifier || loginIdentifier).toLowerCase().trim(), // Use original identifier for name
+            displayName: newPasskeyDisplayName.trim(), // Use new display name for this specific passkey
           },
           pubKeyCredParams: [{ alg: -7, type: "public-key" }],
           authenticatorSelection: {
@@ -1230,7 +1260,6 @@ function App() {
                   setShowLoginFallback(false);
                   setLoginIdentifier("");
                   setCredentialId("");
-                  setAuthSignature("");
                   setStatus("");
                 }}
               >
@@ -1348,7 +1377,7 @@ function App() {
 
                 <button
                   className="btn-primary"
-                  onClick={setRecoverySigner}
+                  onClick={prepareRecoveryTransaction}
                   disabled={isSettingRecovery || !!currentRecoveryAddress}
                 >
                   {isSettingRecovery ? "Setting..." : "Set as Recovery Signer"}
@@ -1422,6 +1451,63 @@ function App() {
       {status && (
         <div className="status-bar">
           <p>{status}</p>
+        </div>
+      )}
+
+      {/* Transaction Review Modal */}
+      {showTxModal && txSimulation && (
+        <div className="modal-overlay" onClick={() => setShowTxModal(false)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>🔐 Sign Transaction</h3>
+            </div>
+            <div className="modal-body">
+              <div className="tx-summary">
+                <h4>Contract Call</h4>
+                <div className="tx-detail-item">
+                  <span className="tx-detail-label">Contract:</span>
+                  <span className="tx-detail-value tx-detail-address">
+                    {txSimulation.contract}
+                  </span>
+                </div>
+                <div className="tx-detail-item">
+                  <span className="tx-detail-label">Function:</span>
+                  <span className="tx-detail-value" style={{ fontFamily: 'monospace', fontWeight: 600 }}>
+                    {txSimulation.functionName}
+                  </span>
+                </div>
+              </div>
+
+              <div className="tx-summary">
+                <h4>Arguments</h4>
+                {txSimulation.args.map((arg: any, index: number) => (
+                  <div key={index} className="tx-detail-item">
+                    <span className="tx-detail-label">{arg.name} ({arg.type}):</span>
+                    <span className="tx-detail-value tx-detail-address">
+                      {arg.value}
+                    </span>
+                  </div>
+                ))}
+              </div>
+
+
+
+              <div style={{ fontSize: '0.875rem', color: '#6b7280' }}>
+                <p><strong>What this does:</strong></p>
+                <p>Sets the specified address as a recovery signer for your smart wallet. 
+                This address will be able to help you regain access if you lose your device.</p>
+              </div>
+            </div>
+            <div className="modal-footer">
+              <button 
+                className="btn-primary" 
+                onClick={executeRecoveryTransaction}
+                style={{ width: '100%' }}
+              >
+                Sign Transaction
+              </button>
+            </div>
+          </div>
         </div>
       )}
     </div>

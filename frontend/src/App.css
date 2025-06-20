@@ -250,6 +250,132 @@
   opacity: 0.8;
 }
 
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1rem;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 12px;
+  max-width: 500px;
+  width: 100%;
+  max-height: 90vh;
+  overflow-y: auto;
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+.modal-header {
+  padding: 1.5rem 1.5rem 0 1.5rem;
+  border-bottom: 1px solid #e2e8f0;
+  margin-bottom: 0;
+}
+
+.modal-header h3 {
+  margin: 0 0 1rem 0;
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #1a1a1a;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  padding: 0 1.5rem 1.5rem 1.5rem;
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+}
+
+.modal-footer .btn-primary,
+.modal-footer .btn-secondary {
+  flex: 0 0 auto;
+  width: auto;
+  min-width: 120px;
+}
+
+.tx-summary {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tx-summary h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #374151;
+}
+
+.tx-detail-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.tx-detail-item:last-child {
+  margin-bottom: 0;
+}
+
+.tx-detail-label {
+  font-weight: 500;
+  color: #6b7280;
+  min-width: 100px;
+}
+
+.tx-detail-value {
+  text-align: right;
+  color: #111827;
+  word-break: break-all;
+  max-width: 280px;
+}
+
+.tx-detail-address {
+  font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace;
+  font-size: 0.75rem;
+}
+
+.warning-box {
+  background: #fef3c7;
+  border: 1px solid #f59e0b;
+  border-radius: 8px;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.warning-box-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-weight: 600;
+  color: #92400e;
+  margin-bottom: 0.5rem;
+}
+
+.warning-box-content {
+  color: #92400e;
+  font-size: 0.875rem;
+  margin: 0;
+}
+
 @media (max-width: 640px) {
   .app-container {
     padding: 1rem;
