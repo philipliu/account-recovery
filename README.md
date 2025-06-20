@@ -2,10 +2,14 @@
 
 A demo application showcasing a Stellar smart contract wallet secured by WebAuthn/passkeys with recovery functionality.
 
+## Demo
+
+![Account Recovery Demo](recording.gif)
+
 ## Features
 
-- **Biometric Authentication**: Create and access wallets using device biometrics (Face ID, Touch ID, Windows Hello, etc.)
-- **Deterministic Addresses**: Wallet addresses are derived from your email/username, enabling access from any device
+- **Biometric Authentication**: Create and access wallets using device biometrics
+- **Deterministic Addresses**: Wallet addresses are derived from your email/username
 - **Recovery System**: Set up recovery signers to regain access if you lose your device
 - **Passkey Rotation**: Switch to a new device by rotating your passkey using the recovery wallet
 
@@ -26,7 +30,7 @@ The wallet address is deterministically generated from your identifier, so you c
    ```
 
 2. **Environment configuration**:
-   This app loads environment variables from the parent directory's `.env` file. Make sure you have a `.env` file in the parent directory (`../`) with:
+   This app loads environment variables from the project directory's `.env` file. Make sure you have a `.env` file in the project directory with:
    ```
    DEPLOYER_SECRET=<your_stellar_secret_key>
    FACTORY_CONTRACT_ID=CCLN4GLYSIRHUY7Q4Q73TUJXQYD4COXDDFCYHKRGOZOZOTTTLXCX46KL
@@ -42,7 +46,7 @@ The wallet address is deterministically generated from your identifier, so you c
 ## Requirements
 
 - Modern browser with WebAuthn support
-- Device with biometric authentication (recommended)
+- Device with biometric authentication
 - Stellar wallet (Freighter, etc.) for recovery setup
 
 ## Factory Contract
