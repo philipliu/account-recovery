@@ -1129,7 +1129,15 @@ function App() {
         {walletAddress && (
           <div className="info-panel success">
             <div className="info-item">
-              <strong>Wallet Address:</strong> {walletAddress}
+              <strong>Wallet Address:</strong>{' '}
+              <a 
+                href={`https://stellar.expert/explorer/testnet/contract/${walletAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#0066cc', textDecoration: 'none' }}
+              >
+                {walletAddress}
+              </a>
             </div>
           </div>
         )}
@@ -1137,7 +1145,15 @@ function App() {
         {!walletAddress && isLoggedIn && loginWalletAddress && (
           <div className="info-panel">
             <div className="info-item">
-              <strong>Note:</strong> You're logged in to wallet: {loginWalletAddress.slice(0, 20)}...
+              <strong>Note:</strong> You're logged in to wallet:{' '}
+              <a 
+                href={`https://stellar.expert/explorer/testnet/contract/${loginWalletAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#0066cc', textDecoration: 'none' }}
+              >
+                {loginWalletAddress.slice(0, 20)}...
+              </a>
             </div>
             <div className="info-item">
               This wallet was created in a previous session.
@@ -1216,18 +1232,21 @@ function App() {
             </div>
             {loginWalletAddress && (
               <div className="info-item">
-                <strong>Wallet Address:</strong> {loginWalletAddress}
+                <strong>Wallet Address:</strong>{' '}
+                <a 
+                  href={`https://stellar.expert/explorer/testnet/contract/${loginWalletAddress}`}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  style={{ color: '#0066cc', textDecoration: 'none' }}
+                >
+                  {loginWalletAddress}
+                </a>
               </div>
             )}
             {loginPublicKey &&
               loginPublicKey !== "(Would extract from credential)" && (
               <div className="info-item">
                 <strong>Public Key:</strong> {loginPublicKey.slice(0, 20)}...
-              </div>
-            )}
-            {authSignature && (
-              <div className="info-item">
-                <strong>Last Signature:</strong> {authSignature.slice(0, 20)}...
               </div>
             )}
           </div>
@@ -1245,12 +1264,28 @@ function App() {
 
           <div className="info-panel">
             <div className="info-item">
-              <strong>Smart Wallet:</strong> {loginWalletAddress}
+              <strong>Wallet Address:</strong>{' '}
+              <a 
+                href={`https://stellar.expert/explorer/testnet/contract/${loginWalletAddress}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{ color: '#0066cc', textDecoration: 'none' }}
+              >
+                {loginWalletAddress}
+              </a>
             </div>
             {currentRecoveryAddress
               ? (
                 <div className="info-item" style={{ color: "#059669", fontWeight: "500" }}>
-                  <strong>Current Recovery Address:</strong> {currentRecoveryAddress} ✅
+                  <strong>Current Recovery Address:</strong>{' '}
+                  <a 
+                    href={`https://stellar.expert/explorer/testnet/account/${currentRecoveryAddress}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#059669', textDecoration: 'none' }}
+                  >
+                    {currentRecoveryAddress}
+                  </a> ✅
                 </div>
               )
               : (
@@ -1273,7 +1308,15 @@ function App() {
               <div>
                 <div className="info-panel">
                   <div className="info-item">
-                    <strong>Recovery Wallet:</strong> {recoveryAddress}
+                    <strong>Recovery Wallet:</strong>{' '}
+                    <a 
+                      href={`https://stellar.expert/explorer/testnet/account/${recoveryAddress}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      style={{ color: '#0066cc', textDecoration: 'none' }}
+                    >
+                      {recoveryAddress}
+                    </a>
                   </div>
                 </div>
 

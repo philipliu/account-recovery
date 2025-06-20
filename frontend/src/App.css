@@ -240,6 +240,16 @@
   }
 }
 
+.info-item a {
+  text-decoration: none;
+  transition: opacity 0.2s ease;
+}
+
+.info-item a:hover {
+  text-decoration: underline;
+  opacity: 0.8;
+}
+
 @media (max-width: 640px) {
   .app-container {
     padding: 1rem;
