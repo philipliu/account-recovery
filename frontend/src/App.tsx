@@ -25,8 +25,7 @@ import {
 } from "@creit.tech/stellar-wallets-kit";
 import "./App.css";
 
-const FACTORY_CONTRACT_ID =
-  "CCLN4GLYSIRHUY7Q4Q73TUJXQYD4COXDDFCYHKRGOZOZOTTTLXCX46KL";
+const FACTORY_CONTRACT_ID = import.meta.env.VITE_FACTORY_CONTRACT_ID;
 const NETWORK_PASSPHRASE = Networks.TESTNET;
 const RPC_URL = "https://soroban-testnet.stellar.org";
 

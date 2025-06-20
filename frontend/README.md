@@ -1,41 +1,53 @@
-# Smart Wallet Frontend
+# Smart Wallet with WebAuthn Recovery
 
-This frontend application demonstrates WebAuthn-based smart wallet deployment on Stellar using the factory contract.
+A demo application showcasing a Stellar smart contract wallet secured by WebAuthn/passkeys with recovery functionality.
+
+## Features
+
+- **Biometric Authentication**: Create and access wallets using device biometrics (Face ID, Touch ID, Windows Hello, etc.)
+- **Deterministic Addresses**: Wallet addresses are derived from your email/username, enabling access from any device
+- **Recovery System**: Set up recovery signers to regain access if you lose your device
+- **Passkey Rotation**: Switch to a new device by rotating your passkey using the recovery wallet
+
+## How It Works
+
+1. **Create Wallet**: Register a passkey and deploy a smart contract wallet to Stellar testnet
+2. **Login**: Authenticate with your passkey to access your existing wallet
+3. **Set Recovery**: Connect an external wallet (Freighter, etc.) as a recovery signer
+4. **Rotate Passkey**: Use your recovery wallet to authorize switching to a new device/passkey
+
+The wallet address is deterministically generated from your identifier, so you can access the same wallet from different devices by using the same email/username.
 
 ## Setup
 
-1. Copy `.env.example` to `.env`:
-   ```bash
-   cp .env.example .env
-   ```
-
-2. Add your deployer secret key to `.env`:
-   ```
-   VITE_DEPLOYER_SECRET=your_stellar_secret_key_here
-   ```
-
-3. Install dependencies:
+1. **Install dependencies**:
    ```bash
    npm install
    ```
 
-4. Run the development server:
+2. **Environment configuration**:
+   This app loads environment variables from the parent directory's `.env` file. Make sure you have a `.env` file in the parent directory (`../`) with:
+   ```
+   DEPLOYER_SECRET=<your_stellar_secret_key>
+   FACTORY_CONTRACT_ID=CCLN4GLYSIRHUY7Q4Q73TUJXQYD4COXDDFCYHKRGOZOZOTTTLXCX46KL
+   ```
+   
+   Note: The `vite.config.ts` is configured to automatically map these to `VITE_` prefixed variables for browser access.
+
+3. **Start development server**:
    ```bash
    npm run dev
    ```
 
-## Usage
+## Requirements
 
-1. **Register with WebAuthn**: Click the "Register with WebAuthn" button to create a new credential. This will extract the P-256 public key needed for the smart wallet.
+- Modern browser with WebAuthn support
+- Device with biometric authentication (recommended)
+- Stellar wallet (Freighter, etc.) for recovery setup
 
-2. **Deploy Smart Wallet**: Once registered, click "Deploy Wallet" to create your smart wallet using the factory contract. The wallet will be deployed with:
-   - Your WebAuthn public key as the signer
-   - A randomly generated admin address
-   - A random salt for deterministic addressing
+## Factory Contract
 
-## Technical Details
-
-- Uses `@simplewebauthn/browser` for WebAuthn functionality
-- Connects to Stellar Testnet via Soroban RPC
-- Factory contract address: `CBYBD4VXIVZBNDAQ5U4IMKIOTKJQ7REPNVJQLJ45K6YYLBLPMZOTDTLD`
-- Extracts uncompressed P-256 public keys (65 bytes) from WebAuthn credentials
+This demo runs on Stellar testnet. The factory contract is pre-deployed at:
+```
+CCLN4GLYSIRHUY7Q4Q73TUJXQYD4COXDDFCYHKRGOZOZOTTTLXCX46KL
+```

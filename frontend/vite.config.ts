@@ -24,6 +24,8 @@ export default defineConfig(({ mode }) => {
       global: 'globalThis',
       // Make DEPLOYER_SECRET available as VITE_DEPLOYER_SECRET
       'import.meta.env.VITE_DEPLOYER_SECRET': JSON.stringify(env.DEPLOYER_SECRET),
+      // Make FACTORY_CONTRACT_ID available as VITE_FACTORY_CONTRACT_ID
+      'import.meta.env.VITE_FACTORY_CONTRACT_ID': JSON.stringify(env.FACTORY_CONTRACT_ID || 'CCLN4GLYSIRHUY7Q4Q73TUJXQYD4COXDDFCYHKRGOZOZOTTTLXCX46KL'),
     },
     envDir: '../', // Load .env from parent directory
   }
